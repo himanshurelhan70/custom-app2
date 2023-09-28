@@ -31,7 +31,7 @@ function Signup() {
 
         axios({
             method: 'post',
-            url: 'http://localhost:9000/api/v1/signup',
+            url: 'https://custom-app2.onrender.com/api/v1/signup',
             data: signupData
         })
             .then((response) => {

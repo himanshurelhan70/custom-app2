@@ -10,7 +10,7 @@ function User({ user }) {
 
         const config = {
             method: "PUT",
-            url: `http://localhost:9000/api/v1/updateUserRole/${userId}`,
+            url: `https://custom-app2.onrender.com/api/v1/updateUserRole/${userId}`,
             withCredentials: true,
             data: {
                 role: selectedRole
