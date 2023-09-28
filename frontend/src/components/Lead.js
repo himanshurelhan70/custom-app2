@@ -5,55 +5,6 @@ function Lead({ record }) {
 
   const [selectedValue, setSelectedValue] = useState(record.CD_Primary ? record.CD_Primary : "-None-");
 
-  // update lead status to approve in CRM
-  // const approveRecord = async (leadId) => {
-  //   console.log("approve is clicked", leadId);
-  //   const config = {
-  //     method: "PUT",
-  //     withCredentials: true,
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     url: `http://localhost:9000/api/v1/updateRecord/approve/${leadId}`,
-  //   };
-
-  //   axios(config)
-  //     .then((response) => {
-  //       const data = response.data;
-  //       console.log(data);
-  //       alert("Record is updated");
-  //     })
-  //     .catch((error) => {
-  //       console.log("error", error.message);
-  //       alert("error");
-  //     });
-  // };
-
-
-  // update lead status to reject in CRM
-  // const rejectRecord = async (leadId) => {
-  //   console.log("Reject is clicked", leadId);
-  //   const config = {
-  //     method: "PUT",
-  //     withCredentials: true,
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     url: `http://localhost:9000/api/v1/updateRecord/update/${leadId}`,
-  //   };
-
-  //   axios(config)
-  //     .then((response) => {
-  //       const data = response.data;
-  //       console.log(data);
-  //       alert("Record is updated");
-  //     })
-  //     .catch((error) => {
-  //       console.log("error", error.message);
-  //       alert("error");
-  //     });
-  // };
-
   // update lead 
   const updateRecord = async (leadId) => {
     console.log("Update is clicked", leadId, selectedValue);
@@ -63,7 +14,7 @@ function Lead({ record }) {
       headers: {
         "Content-Type": "application/json",
       },
-      url: `http://localhost:9000/api/v1/updateRecord/update/${leadId}`,
+      url: `https://custom-app2.onrender.com/api/v1/updateRecord/update/${leadId}`,
       data: {
         selectedValue: selectedValue
       }
