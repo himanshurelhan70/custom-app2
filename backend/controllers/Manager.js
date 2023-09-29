@@ -117,3 +117,35 @@ exports.updateRecord = async (req, res) => {
 
 }
 
+// getAttachments
+exports.getAttachments = async (req, res) => {
+    await getZohoAccessToken();
+
+    const { recordId } = req.params;
+    console.log("getAttachments running");
+    const config = {
+        method: "GET",
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${access_token}`
+        },
+        url: `https://www.zohoapis.com/crm/v5/CL/${recordId}/Attachments?fields=id,File_Name`
+    };
+
+    axios.request(config)
+        .then((result) => {
+            const leads = result.data.data;
+            console.log('fetched attachments', leads);
+
+
+            const data = leads;
+
+            // sending data to frontend
+            res.status(200).json(data);
+        })
+        .catch((err) => {
+            console.log('error ---------->', err);
+            res.status(500).json(err);
+        });
+}
+

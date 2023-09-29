@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import axios from "axios";
 
 function Lead({ record }) {
@@ -37,6 +37,27 @@ function Lead({ record }) {
     console.log(e.target.value);
     setSelectedValue(e.target.value);
     }
+
+    const fetchData = () => {
+      console.log("fetching records");
+
+      axios.get("http://localhsot:9000/api/v1/getAttachments", {
+          withCredentials: true
+      })
+          .then((response) => {
+              const res = response.data;
+              console.log("fetched records", res);
+          })
+          .catch((error) => {
+              console.log("error", error);
+              alert("Something went wrong");
+          });
+  }
+
+
+  useEffect(() => {
+      fetchData();
+  }, []);
 
 
   return (

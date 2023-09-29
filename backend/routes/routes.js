@@ -6,7 +6,7 @@ const {login, signup, logout} = require('../controllers/Auth');
 const {auth, isManager, isAdmin, isVisitor} = require('../middlewares/auth');
 
 // manager controllers
-const {getData, updateRecord} = require('../controllers/Manager');
+const {getData, updateRecord, getAttachments} = require('../controllers/Manager');
 
 // admin controllers
 const {getAllUsers, updateUserRole} = require('../controllers/Admin');
@@ -21,6 +21,8 @@ router.post('/logout', auth, logout);
 
 // manager routes
 router.get('/getData', auth, isManager, getData);
+router.get('/getAttachments', auth, isManager, getAttachments);
+
 router.put('/updateRecord/update/:leadId', auth, isManager, updateRecord);
 
 // admin routes
