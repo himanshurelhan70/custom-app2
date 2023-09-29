@@ -1,4 +1,3 @@
-const axios = require('axios');
 const User = require('../models/User');
 
 // Get all Users from MongoDB

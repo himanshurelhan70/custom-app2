@@ -1,16 +1,14 @@
 import "./App.css";
 import { NavLink, Route, Routes } from 'react-router-dom';
-import SignupPage from "./pages/SignupPage";
 import LoginPage from "./pages/LoginPage";
 import LogoutPage from "./pages/LogoutPage";
 import LeadsPage from "./pages/LeadsPage";
 import UsersPage from "./pages/UsersPage";
-import CreateRecord from "./pages/CreateRecord";
 import Home from "./pages/Home";
-
 import { useState } from "react";
-
 import Cookies from "js-cookie"
+
+
 
 function App() {
   const [loginData, setLoginData] = useState({
@@ -40,9 +38,6 @@ function App() {
 
             {isLoggedIn && <p className="text-lg text-white block p-4">Hi {currentUser}</p>}
 
-             {!isLoggedIn && <li>
-                <NavLink to="/signup" className="text-lg text-white block p-4">SignUp</NavLink>
-              </li>}
 
              {
               !isLoggedIn &&  <li>
@@ -64,13 +59,11 @@ function App() {
 
       <Routes>
         <Route index element={<Home />} />
-        <Route path='/signup' element={<SignupPage />} />
         <Route path='/login' element={<LoginPage loginData={loginData} setLoginData={setLoginData} 
         setIsLoggedIn={setIsLoggedIn} setCurrentUser={setCurrentUser}/>} />
 
         <Route path='/leads' element={<LeadsPage />} />
         <Route path='/users' element={<UsersPage />} />
-        <Route path='/createRecord' element={<CreateRecord />} />
 
         <Route path='/logout' element={<LogoutPage isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}  />} />
       </Routes>
