@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema({
         default: 'Visitor'
     },
     state : {
-        type: String,
+        type: [String],
         required: true,
         trim: true
     }

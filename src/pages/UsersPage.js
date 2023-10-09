@@ -11,7 +11,7 @@ function UsersPage() {
 
     const fetchData = () => {
         setIsLoading(true);
-        axios.get("https://custom-app2.onrender.com/api/v1/getAllUsers", {
+        axios.get("http://127.0.0.1:9000/api/v1/getAllUsers", {
             withCredentials: true
         })
             .then((response) => {

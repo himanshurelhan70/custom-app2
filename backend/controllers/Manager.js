@@ -20,6 +20,7 @@ function getZohoAccessToken() {
         .request(config)
         .then((response) => {
             access_token = response.data.access_token; // Store the access token
+            console.log("response.data", response.data);
             console.log("access token generated", access_token);
             return access_token;
         })
@@ -39,23 +40,40 @@ exports.getData = async (req, res) => {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${access_token}`
         },
-        url: "https://www.zohoapis.com/crm/v2/CL"
+        url: "https://www.zohoapis.com/crm/v2/CL",
+        params: {
+            fields: "id,Name,Mobile,City_New1,Asset_Type,Loan_Amt_Rs_Lacs,Model,Lead_Status,CD_Primary,Attachments,State1,Lead_Date,Actual_Disb_Date,"
+        }
     };
 
     axios.request(config)
         .then((result) => {
             const leads = result.data.data;
-            console.log('fetched leads', leads);
-
+            console.log('fetched leads', leads[0]);
 
             // filtering the leads
-            // const data = leads.filter((lead) => {
-            //     console.log("----", req.user.state.toLowerCase());
-            //     console.log("state", lead.State1);
-            //     return (lead?.State1?.toLowerCase() === req.user.state.toLowerCase());
-            // })
+            const data = leads.filter((lead) => {
+                const states = req.user.state;
+                console.log("user States --> ", states);
 
-            const data = leads;
+                let leadState = lead?.State1?.trim()?.toLowerCase();
+                leadState = leadState ? leadState : '';
+                console.log("lead State -->", leadState, "test");
+
+                const leadStatus = lead?.Lead_Status?.trim().toLowerCase();
+
+
+                return (states.find(state => {
+                    // console.log("Check ->",state.trim().toLowerCase()===leadState);
+                    return state.trim().toLowerCase() === leadState;
+                }) && leadStatus === 'allocated' && !lead?.Actual_Disb_Date );
+            })
+
+
+
+            console.log("data", data)
+            // leads.
+            // const data = leads;
 
             // sending data to frontend
             res.status(200).json(data);
@@ -73,7 +91,7 @@ exports.updateRecord = async (req, res) => {
     await getZohoAccessToken();
 
     const { leadId } = req.params;
-    const {selectedValue} = req.body;
+    const { selectedValue } = req.body;
 
     console.log("leadId and selectedValue -->", leadId, selectedValue);
 
@@ -129,19 +147,65 @@ exports.getAttachments = async (req, res) => {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${access_token}`
         },
-        url: `https://www.zohoapis.com/crm/v5/CL/${recordId}/Attachments?fields=id,File_Name`
+        url: `https://www.zohoapis.com/crm/v5/CL/${recordId}/Attachments?fields=id,File_Name,$file_id`
     };
 
+    // first get list of attachments
     axios.request(config)
         .then((result) => {
-            const leads = result.data.data;
-            console.log('fetched attachments', leads);
+            const attachments = result.data.data;
+            console.log('fetched attachments', attachments);
+
+            if (!attachments || attachments.length === 0) {
+                return res.json({
+                    message: 'This record has no attachments'
+                })
+            }
+
+            let filesUrl = [];
+            attachments.forEach((attachment) => {
+                console.log(attachment.id, attachment.File_Name);
+                console.log(`https://www.zohoapis.com/crm/v5/CL/${recordId}/Attachments/${attachment.id}`);
+                const config = {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${access_token}`
+                    },
+                    url: `https://www.zohoapis.com/crm/v5/CL/${recordId}/Attachments/${attachment.id}`,
+                }
 
 
-            const data = leads;
+                axios.request(config)
+                    .then((res) => {
+                        console.log("res", res.data);
+                        // const path = "file.txt";
+
+                        const baseUrl = path.join(__dirname, '/files/');
+
+                        const filePath = path.join(baseUrl, `${attachment.id}.txt`);
+                        console.log("filePath", filePath);
+
+
+                        fs.writeFileSync(filePath, res.data, 'utf8', (err) => {
+                            if (err) {
+                                console.error('Error writing to file:', err);
+                            } else {
+                                console.log('Data has been written to the file successfully.');
+                                filesUrl.filePath = filePath;
+                            }
+                        });
+                    })
+                    .catch((err) => console.log("err", err))
+            });
+
+
+
+
+
 
             // sending data to frontend
-            res.status(200).json(data);
+            res.status(200).json(filesUrl);
         })
         .catch((err) => {
             console.log('error ---------->', err);

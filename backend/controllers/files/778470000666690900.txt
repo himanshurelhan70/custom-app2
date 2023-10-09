@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<response uri="/crm/private/xml/Potentials/getRecords"><error><code>4600</code><message>Unable to process your request. Please verify whether you have entered proper method name,parameter and parameter values.</message></error></response>

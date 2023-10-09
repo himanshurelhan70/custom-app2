@@ -14,7 +14,7 @@ function Lead({ record }) {
       headers: {
         "Content-Type": "application/json",
       },
-      url: `https://custom-app2.onrender.com/api/v1/updateRecord/update/${leadId}`,
+      url: `http://127.0.0.1:9000/api/v1/updateRecord/update/${leadId}`,
       data: {
         selectedValue: selectedValue
       }
@@ -32,32 +32,36 @@ function Lead({ record }) {
       });
   };
 
+  // download attachment
+  const downloadAttachments = async (leadId) => {
+    console.log("Download is clicked", leadId);
+    const config = {
+      method: "GET",
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      url: `http://127.0.0.1:9000/api/v1/getAttachments/${leadId}`,
+    };
+
+    axios(config)
+      .then((response) => {
+        const data = response.data;
+        console.log(data);
+        alert("Files are downloaded");
+      })
+      .catch((error) => {
+        console.log("error", error);
+        alert("error");
+      });
+  };
+
   
   const handleChange = (e) => {
     console.log(e.target.value);
     setSelectedValue(e.target.value);
     }
 
-    const fetchData = () => {
-      console.log("fetching records");
-
-      axios.get("http://localhsot:9000/api/v1/getAttachments", {
-          withCredentials: true
-      })
-          .then((response) => {
-              const res = response.data;
-              console.log("fetched records", res);
-          })
-          .catch((error) => {
-              console.log("error", error);
-              alert("Something went wrong");
-          });
-  }
-
-
-  useEffect(() => {
-      fetchData();
-  }, []);
 
 
   return (
@@ -89,6 +93,15 @@ function Lead({ record }) {
           </button> 
       </td>
 
+      <td className="border-2 px-2 py-1">
+        <button
+            id="reject"
+            className="bg-green-800 text-white p-1"
+            onClick={() => downloadAttachments(record.id)}
+          >
+            Download
+          </button> 
+      </td>
     </tr>
   );
 }

@@ -13,7 +13,7 @@ function LeadsPage() {
         // loader
         setIsLoading(true);
 
-        axios.get("https://custom-app2.onrender.com/api/v1/getData", {
+        axios.get("http://127.0.0.1:9000/api/v1/getData", {
             withCredentials: true
         })
             .then((response) => {
@@ -49,6 +49,7 @@ function LeadsPage() {
                         <th className='border-2 px-2 py-1'>Lead Status</th>
                         <th className='border-2 px-2 py-1'>CD Primary</th>
                         <th className='border-2 px-2 py-1'>Action</th>
+                        <th className='border-2 px-2 py-1'>Attachments</th>
                     </tr>
                 </thead>
                 <tbody>

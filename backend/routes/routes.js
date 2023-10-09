@@ -21,7 +21,7 @@ router.post('/logout', auth, logout);
 
 // manager routes
 router.get('/getData', auth, isManager, getData);
-router.get('/getAttachments', auth, isManager, getAttachments);
+router.get('/getAttachments/:recordId', auth, isManager, getAttachments);
 
 router.put('/updateRecord/update/:leadId', auth, isManager, updateRecord);
 
