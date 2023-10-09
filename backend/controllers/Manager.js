@@ -3,36 +3,36 @@ const axios = require('axios');
 const FormData = require('form-data');
 const fs = require('fs');
 const path = require('path');
+const {getAccessToken} = require('../accessToken');
 
 
 let access_token = "";
-let users_access_token = "";
 
-// Generates Access Token using refresh Token
-function getZohoAccessToken() {
-    let config = {
-        method: "post",
-        maxBodyLength: Infinity,
-        url: "https://accounts.zoho.com/oauth/v2/token?refresh_token=1000.0e412b3f237b1c390f52e48777b4c2e6.7c23f019ec1aabc40ab24867279c3262&client_id=1000.F6UPW5CFBJY0JEOR5H2T5D0I9S1OWL&client_secret=36660c4d98a43e569897ac6f4b6ea2e8e0c49be149&grant_type=refresh_token",
-    };
+// // Generates Access Token using refresh Token
+// function getZohoAccessToken() {
+//     let config = {
+//         method: "post",
+//         maxBodyLength: Infinity,
+//         url: "https://accounts.zoho.com/oauth/v2/token?refresh_token=1000.0e412b3f237b1c390f52e48777b4c2e6.7c23f019ec1aabc40ab24867279c3262&client_id=1000.F6UPW5CFBJY0JEOR5H2T5D0I9S1OWL&client_secret=36660c4d98a43e569897ac6f4b6ea2e8e0c49be149&grant_type=refresh_token",
+//     };
 
-    return axios
-        .request(config)
-        .then((response) => {
-            access_token = response.data.access_token; // Store the access token
-            console.log("response.data", response.data);
-            console.log("access token generated", access_token);
-            return access_token;
-        })
-        .catch((error) => {
-            throw error;
-        });
-}
+//     return axios
+//         .request(config)
+//         .then((response) => {
+//             access_token = response.data.access_token; // Store the access token
+//             console.log("response.data", response.data);
+//             console.log("access token generated", access_token);
+//             return access_token;
+//         })
+//         .catch((error) => {
+//             throw error;
+//         });
+// }
 
 
 // Get All leads from CRM
 exports.getData = async (req, res) => {
-    await getZohoAccessToken();
+    access_token = await getAccessToken();
 
     const config = {
         method: "GET",
@@ -88,7 +88,7 @@ exports.getData = async (req, res) => {
 // update record
 exports.updateRecord = async (req, res) => {
     // Generating access Token
-    await getZohoAccessToken();
+    access_token = await getAccessToken();
 
     const { leadId } = req.params;
     const { selectedValue } = req.body;
@@ -137,7 +137,7 @@ exports.updateRecord = async (req, res) => {
 
 // getAttachments
 exports.getAttachments = async (req, res) => {
-    await getZohoAccessToken();
+    access_token = await getAccessToken();
 
     const { recordId } = req.params;
     console.log("getAttachments running");
