@@ -79,8 +79,10 @@ function Lead({ record }) {
           <option value="Follow Up">Follow Up</option>
           <option value="Logged In">Logged In</option>
           <option value="Approved">Approved</option>
-          <option value="Disbursed">Disbursed</option>
           <option value="Rejected">Rejected</option>
+          <option value="Disbursed">Disbursed</option>
+          <option value="Docs Processing">Docs Processing</option>
+          <option value="Pending Feedback">Pending Feedback</option>
         </select>
       </td>
       <td className="border-2 px-2 py-1">

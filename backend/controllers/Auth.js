@@ -3,6 +3,8 @@ const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
+// gagandeepgoyal@gmail.com
+// Gagan@CarDekho#1234
 
 //login the user
 exports.login = async (req, res) => {

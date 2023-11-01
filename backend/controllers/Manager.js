@@ -3,85 +3,122 @@ const axios = require('axios');
 const FormData = require('form-data');
 const fs = require('fs');
 const path = require('path');
-const {getAccessToken} = require('../accessToken');
+const { getAccessToken } = require('../accessToken');
+
+let next_page_token = "false";
 
 
 let access_token = "";
 
-// // Generates Access Token using refresh Token
-// function getZohoAccessToken() {
-//     let config = {
-//         method: "post",
-//         maxBodyLength: Infinity,
-//         url: "https://accounts.zoho.com/oauth/v2/token?refresh_token=1000.0e412b3f237b1c390f52e48777b4c2e6.7c23f019ec1aabc40ab24867279c3262&client_id=1000.F6UPW5CFBJY0JEOR5H2T5D0I9S1OWL&client_secret=36660c4d98a43e569897ac6f4b6ea2e8e0c49be149&grant_type=refresh_token",
-//     };
-
-//     return axios
-//         .request(config)
-//         .then((response) => {
-//             access_token = response.data.access_token; // Store the access token
-//             console.log("response.data", response.data);
-//             console.log("access token generated", access_token);
-//             return access_token;
-//         })
-//         .catch((error) => {
-//             throw error;
-//         });
-// }
-
+// gagandeepgoyal@gmail.com
+// Gagan@CarDekho#1234
 
 // Get All leads from CRM
 exports.getData = async (req, res) => {
+    // Generating access Token
     access_token = await getAccessToken();
 
-    const config = {
-        method: "GET",
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${access_token}`
-        },
-        url: "https://www.zohoapis.com/crm/v2/CL",
-        params: {
-            fields: "id,Name,Mobile,City_New1,Asset_Type,Loan_Amt_Rs_Lacs,Model,Lead_Status,CD_Primary,Attachments,State1,Lead_Date,Actual_Disb_Date,"
+    // ///
+    let finalData = [];
+    let pageToken = false;
+
+
+    const getBulkRead = async () => {
+        access_token = await getAccessToken();
+
+        let config = {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${access_token}`
+            },
+            url: "https://www.zohoapis.com/crm/v5/CL",
+            params: {
+                fields: `id,Name,Mobile,City_New1,Asset_Type,Loan_Amt_Rs_Lacs,Model,Lead_Status,CD_Primary,Attachments,State1,Lead_Date,Actual_Disb_Date,CD_SM_Name`
+            }
+        };
+
+
+        console.log("outside if", pageToken);
+        if (pageToken) {
+            console.log("inside if");
+
+            config.params.page_token = pageToken;
         }
-    };
 
-    axios.request(config)
-        .then((result) => {
-            const leads = result.data.data;
-            console.log('fetched leads', leads[0]);
+        console.log(config);
+        await axios.request(config)
+            .then((result) => {
+                const leads = result.data.data;
+                console.log('fetched leads', leads[0], leads.length);
+                next_page_token = result.data.info.next_page_token;
+                console.log("next_page_token", next_page_token)
 
-            // filtering the leads
-            const data = leads.filter((lead) => {
-                const states = req.user.state;
-                console.log("user States --> ", states);
+                if (next_page_token) {
+                    pageToken = next_page_token;
+                }
 
-                let leadState = lead?.State1?.trim()?.toLowerCase();
-                leadState = leadState ? leadState : '';
-                console.log("lead State -->", leadState, "test");
-
-                const leadStatus = lead?.Lead_Status?.trim().toLowerCase();
+                console.log("pageToken", pageToken);
 
 
-                return (states.find(state => {
-                    // console.log("Check ->",state.trim().toLowerCase()===leadState);
-                    return state.trim().toLowerCase() === leadState;
-                }) && leadStatus === 'allocated' && !lead?.Actual_Disb_Date );
+                // filtering the leads
+                const data = leads.filter((lead) => {
+                    const states = req.user.state;
+                    // console.log("user States --> ", states);
+
+                    let leadState = lead?.State1?.trim()?.toLowerCase();
+                    leadState = leadState ? leadState : '';
+                    // console.log("lead State -->", leadState, "test");
+
+                    const leadStatus = lead?.Lead_Status?.trim().toLowerCase();
+
+                    let cdSmName = lead?.CD_SM_Name ? lead.CD_SM_Name?.trim().toLowerCase() : '';
+
+                    const allowedCdPrimaryValues = ['approved', 'disbursed', 'docs processing', 'follow up', 'logged in', 'pending feedback', 'rejected'];
+
+                    const cdPrimary = lead?.CD_Primary?.toLowerCase()?.trim();
+
+                    const allowedCdPrimary = allowedCdPrimaryValues.includes(cdPrimary);
+
+
+
+                    // console.log("allowedCdPrimary", allowedCdPrimary);
+
+                    // return (states.find(state => {
+                    //     // console.log("Check ->",state.trim().toLowerCase()===leadState);
+                    //     return state.trim().toLowerCase() === leadState;
+                    // }) && leadStatus === 'allocated' && !lead?.Actual_Disb_Date && CD_SM_Name.includes('bhaskar'));
+
+                    return (states.find(state => {
+                        // console.log("Check ->",state.trim().toLowerCase()===leadState);
+                        return state.trim().toLowerCase() === leadState;
+                    }) && leadStatus === 'allocated' && allowedCdPrimary);
+                })
+
+                finalData = [...finalData, ...data];
+
+
+
+                // console.log("data", data);
+
+
             })
+            .catch((err) => {
+                console.log('error ---------->', err);
+                // res.status(500).json(err);
+            });
 
+    }
 
+    for (let i = 0; i < 3; i++) {
+        console.log("iterating", i)
+        await getBulkRead();
+    }
 
-            console.log("data", data)
-            // leads.
-            // const data = leads;
+    console.log("finalData", finalData);
+    // sending data to frontend
+    res.status(200).json(finalData);
 
-            // sending data to frontend
-            res.status(200).json(data);
-        })
-        .catch((err) => {
-            console.log('error ---------->', err);
-            res.status(500).json(err);
-        });
 }
 
 
