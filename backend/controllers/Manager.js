@@ -110,7 +110,7 @@ exports.getData = async (req, res) => {
 
     }
 
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 6; i++) {
         console.log("iterating", i)
         await getBulkRead();
     }
