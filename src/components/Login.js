@@ -26,7 +26,7 @@ function Login({ loginData, setLoginData, setIsLoggedIn, setCurrentUser }) {
             },
             withCredentials: true,
             data: loginData,
-            url: "http://127.0.0.1:9000/api/v1/login"
+            url: "https://custom-app2.onrender.com/api/v1/login"
         };
 
 

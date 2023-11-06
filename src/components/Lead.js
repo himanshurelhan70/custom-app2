@@ -14,7 +14,7 @@ function Lead({ record }) {
       headers: {
         "Content-Type": "application/json",
       },
-      url: `http://127.0.0.1:9000/api/v1/updateRecord/update/${leadId}`,
+      url: `https://custom-app2.onrender.com/api/v1/updateRecord/update/${leadId}`,
       data: {
         selectedValue: selectedValue
       }
@@ -41,7 +41,7 @@ function Lead({ record }) {
       headers: {
         "Content-Type": "application/json",
       },
-      url: `http://127.0.0.1:9000/api/v1/getAttachments/${leadId}`,
+      url: `https://custom-app2.onrender.com/api/v1/getAttachments/${leadId}`,
     };
 
     axios(config)

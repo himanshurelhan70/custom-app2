@@ -12,7 +12,7 @@ function LogoutPage({isLoggedIn, setIsLoggedIn}) {
             "Content-Type": "application/json",
         },
         withCredentials: true,
-        url: "http://127.0.0.1:9000/api/v1/logout"
+        url: "https://custom-app2.onrender.com/api/v1/logout"
     };
 
 

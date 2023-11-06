@@ -13,7 +13,7 @@ function LeadsPage() {
         // loader
         setIsLoading(true);
 
-        axios.get("http://127.0.0.1:9000/api/v1/getData", {
+        axios.get("https://custom-app2.onrender.com/api/v1/getData", {
             withCredentials: true
         })
             .then((response) => {
