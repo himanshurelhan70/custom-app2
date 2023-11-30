@@ -47,7 +47,6 @@ require("./config/database").connect();
 const routes = require('./routes/routes');
 app.use('/api/v1', routes);
 
-
 app.listen(PORT, () => {
     console.log(`app is running on port ${PORT}`);
 });
