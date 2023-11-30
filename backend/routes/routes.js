@@ -291,7 +291,9 @@ router.post('/dialabank', async (req, res) => {
 
         }
 
-       
+        return res.json({
+            message: "success",
+        })
     }
     catch(error){
         return res.json({
